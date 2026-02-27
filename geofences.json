@@ -1,0 +1,30 @@
+[
+  {
+    "id": "usc",
+    "name": "USC Campus",
+    "lat": 34.0224,
+    "lon": -118.2851,
+    "radius": 500
+  },
+  {
+    "id": "santa_monica",
+    "name": "Santa Monica Beach",
+    "lat": 34.0095,
+    "lon": -118.497,
+    "radius": 300
+  },
+  {
+    "id": "koreatown",
+    "name": "Koreatown",
+    "lat": 34.0578,
+    "lon": -118.3004,
+    "radius": 500
+  },
+  {
+    "id": "custom_1772236063",
+    "name": "Qianshu's Home",
+    "lat": 34.02711074127289,
+    "lon": -118.29723298567822,
+    "radius": 10
+  }
+]

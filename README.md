@@ -18,13 +18,13 @@ Login:
 Username: tenant@thingsboard.org
 Password: tenant
 ### 3.Create Device in ThingsBoard
-Go to:
+- Go to:
 Entities → Devices → Add Device
-Create:
+- Create:
 Device Name: Phone-Eason
-After creation:
+- After creation:
 Click Device → Copy Access Token
-Example:
+- Example:
 hr9qlCMjAL2XeF8shwsV
 
 ### 4.Configure OwnTracks (Mobile App)

@@ -21,6 +21,13 @@
     "radius": 500
   },
   {
+    "id": "dtla",
+    "name": "Downtown LA",
+    "lat": 34.0414,
+    "lon": -118.2550,
+    "radius": 1000
+  },
+  {
     "id": "custom_1772236063",
     "name": "Qianshu's Home",
     "lat": 34.02711074127289,

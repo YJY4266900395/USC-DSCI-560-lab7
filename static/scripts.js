@@ -9,7 +9,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
 // =============================================
 // STATE
 // =============================================
-const location_interval = 5;  // interval of updating location, seconds
+const location_interval = 10;  // interval of updating location, seconds; owntracks default 10s
 const deviceMarkers = {};
 const deviceTrails = {};
 const deviceTrailCoords = {};

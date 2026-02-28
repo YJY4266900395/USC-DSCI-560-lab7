@@ -54,32 +54,6 @@ EMAIL_RECIPIENTS = [                         # Who receives notifications
 #     "teammate3@gmail.com",
 ]
 
-# Geofence locations: places you want to monitor
-# radius is in meters
-GEOFENCES = [
-    {
-        "id": "usc",
-        "name": "USC Campus",
-        "lat": 34.0224,
-        "lon": -118.2851,
-        "radius": 500,
-    },
-    {
-        "id": "santa_monica",
-        "name": "Santa Monica Beach",
-        "lat": 34.0095,
-        "lon": -118.4970,
-        "radius": 300,
-    },
-    {
-        "id": "koreatown",
-        "name": "Koreatown",
-        "lat": 34.0578,
-        "lon": -118.3004,
-        "radius": 500,
-    },
-]
-
 # =============================================================================
 # PERSISTENCE HELPERS
 # =============================================================================

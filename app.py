@@ -504,5 +504,6 @@ if __name__ == "__main__":
     poller.start()
 
     print("[INFO] Starting Flask server on http://localhost:5001")
+    print("[INFO] Test page on http://localhost:5001/test")
     print("[INFO] Make sure ThingsBoard is accessible at", THINGSBOARD_URL)
     app.run(debug=False, host="0.0.0.0", port=5001)

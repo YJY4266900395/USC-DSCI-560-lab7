@@ -46,7 +46,7 @@ DEVICES = [
 # Use that 16-char app password below, NOT your regular Gmail password
 
 EMAIL_ENABLED = True  # Set to False to disable email notifications
-EMAIL_SENDER = "pengqianshu2025@gmail.com"       # Your Gmail address
+EMAIL_SENDER = "qianshupeng2025@gmail.com"       # Your Gmail address
 EMAIL_PASSWORD = "sehq saaa clul fgwl"       # Gmail App Password
 EMAIL_RECIPIENTS = [                         # Who receives notifications
     "qianshup@usc.edu",

@@ -8,12 +8,17 @@ This lab demonstrates how to collect real-time GPS data from a mobile device and
 
 ### 2. AWS Setup
 - Step 1: Launch EC2 Instance
-- Launch Ubuntu EC2 instance
-- Open port 8080 in Security Group
-- Public IP: http://3.151.116.127:8080
+
+  Launch Ubuntu EC2 instance
+
+  Open port 8080 in Security Group
+
+  Public IP: http://3.151.116.127:8080
 - Login:
 Username: tenant@thingsboard.org
+
 Password: tenant
+
 ### 3.Create Device in ThingsBoard
 - Go to:
 Entities → Devices → Add Device

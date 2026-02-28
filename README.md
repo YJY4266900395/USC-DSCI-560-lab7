@@ -56,3 +56,17 @@ You should see:lat， lon， batt，conn
 lat: 34.032913
 batt: 50
 conn: w
+
+### 7. Start Mapping Program - Live Tracker
+
+Dependencies: flask, requests
+
+```bash
+python app.py
+```
+
+Then view the map on http://127.0.0.1:5001. 
+
+To test the functions with control panel, visit http://127.0.0.1:5001/test.
+
+You can add geofences on the map. When devices enter/leave the geofence, the website will pop a notification, and email notification will be sent to preset addresses. 

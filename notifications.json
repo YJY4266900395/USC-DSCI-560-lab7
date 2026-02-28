@@ -1,66 +1,34 @@
 [
   {
+    "type": "depart",
+    "device": "Qianshu",
+    "location": "Qianshu's Home",
+    "distance": 66,
+    "timestamp": "2026-02-27 16:36:28",
+    "message": "🚶 Qianshu left Qianshu's Home"
+  },
+  {
     "type": "arrive",
     "device": "Qianshu",
     "location": "USC Campus",
-    "distance": 0,
-    "timestamp": "2026-02-27 15:59:54",
+    "distance": 347,
+    "timestamp": "2026-02-27 16:56:28",
     "message": "📍 Qianshu arrived at USC Campus"
   },
   {
     "type": "depart",
     "device": "Qianshu",
-    "location": "Qianshu's Home",
-    "distance": 1235,
-    "timestamp": "2026-02-27 15:59:54",
-    "message": "🚶 Qianshu left Qianshu's Home"
-  },
-  {
-    "type": "depart",
-    "device": "Qianshu",
     "location": "USC Campus",
-    "distance": 1231,
-    "timestamp": "2026-02-27 15:59:57",
+    "distance": 872,
+    "timestamp": "2026-02-27 20:39:54",
     "message": "🚶 Qianshu left USC Campus"
   },
   {
     "type": "arrive",
     "device": "Qianshu",
     "location": "Qianshu's Home",
-    "distance": 8,
-    "timestamp": "2026-02-27 15:59:57",
-    "message": "📍 Qianshu arrived at Qianshu's Home"
-  },
-  {
-    "type": "arrive",
-    "device": "Qianshu",
-    "location": "USC Campus",
-    "distance": 0,
-    "timestamp": "2026-02-27 16:00:09",
-    "message": "📍 Qianshu arrived at USC Campus"
-  },
-  {
-    "type": "depart",
-    "device": "Qianshu",
-    "location": "Qianshu's Home",
-    "distance": 1235,
-    "timestamp": "2026-02-27 16:00:09",
-    "message": "🚶 Qianshu left Qianshu's Home"
-  },
-  {
-    "type": "depart",
-    "device": "Qianshu",
-    "location": "USC Campus",
-    "distance": 1231,
-    "timestamp": "2026-02-27 16:00:09",
-    "message": "🚶 Qianshu left USC Campus"
-  },
-  {
-    "type": "arrive",
-    "device": "Qianshu",
-    "location": "Qianshu's Home",
-    "distance": 8,
-    "timestamp": "2026-02-27 16:00:09",
+    "distance": 4,
+    "timestamp": "2026-02-27 20:45:20",
     "message": "📍 Qianshu arrived at Qianshu's Home"
   }
 ]

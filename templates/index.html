@@ -4,16 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trojan Trio - Live Location Tracker</title>
-
-    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -29,6 +23,7 @@
             grid-template-columns: 340px 1fr;
             grid-template-rows: 60px 1fr;
             height: 100vh;
+            position: relative;
         }
 
         /* ---- Top Bar ---- */
@@ -40,264 +35,178 @@
             justify-content: space-between;
             padding: 0 24px;
             border-bottom: 1px solid #334155;
+            z-index: 1000;
         }
-
-        .top-bar h1 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #f1f5f9;
-        }
-
-        .top-bar h1 span {
-            color: #f59e0b;
-        }
-
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: #94a3b8;
-        }
-
+        .top-bar h1 { font-size: 18px; font-weight: 600; color: #f1f5f9; }
+        .top-bar h1 span { color: #f59e0b; }
+        .status-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #94a3b8; }
         .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #22c55e;
+            width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
             animation: pulse 2s infinite;
         }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
         /* ---- Sidebar ---- */
         .sidebar {
             background: #1e293b;
             border-right: 1px solid #334155;
-            overflow-y: auto;
             padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 16px;
+            overflow: hidden;
         }
-
         .section-title {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            color: #64748b;
-            margin-bottom: 4px;
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.2px; color: #64748b; margin-bottom: 4px;
         }
 
         /* Device cards */
         .device-card {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 14px;
-            transition: border-color 0.2s;
+            background: #0f172a; border: 1px solid #334155; border-radius: 10px;
+            padding: 14px; transition: border-color 0.2s;
         }
-
-        .device-card:hover {
-            border-color: #f59e0b;
-        }
-
-        .device-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
+        .device-card:hover { border-color: #f59e0b; }
+        .device-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
         .device-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            color: #0f172a;
+            width: 36px; height: 36px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #0f172a;
+        }
+        .device-name { font-weight: 600; font-size: 15px; }
+        .device-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; color: #94a3b8; }
+        .device-meta span { display: flex; align-items: center; gap: 4px; }
+        #device-list {
+            max-height: 400px;
+            overflow-y: auto;
         }
 
-        .device-name {
-            font-weight: 600;
-            font-size: 15px;
+        /* ---- Notification section in sidebar (keep original look) ---- */
+        .notif-header {
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
         }
-
-        .device-meta {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            font-size: 12px;
-            color: #94a3b8;
+        .notif-header .section-title { cursor: pointer; }
+        .notif-clear-btn {
+            font-size: 11px; color: #64748b; background: none; border: 1px solid #334155;
+            border-radius: 6px; padding: 3px 10px; cursor: pointer; transition: all 0.2s;
         }
+        .notif-clear-btn:hover { color: #f59e0b; border-color: #f59e0b; }
 
-        .device-meta span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* Notification panel */
         .notif-panel {
             flex: 1;
-            min-height: 0;
+            min-height: 8px;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
-        .notif-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .notif-clear-btn {
-            font-size: 11px;
-            color: #64748b;
-            background: none;
-            border: 1px solid #334155;
-            border-radius: 6px;
-            padding: 3px 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .notif-clear-btn:hover {
-            color: #f59e0b;
-            border-color: #f59e0b;
-        }
-
-        .notif-list {
-            flex: 1;
-            overflow-y: auto;
+        .notif-preview-list {
             display: flex;
             flex-direction: column;
             gap: 6px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
         }
-
         .notif-item {
-            background: #0f172a;
-            border-left: 3px solid #22c55e;
-            border-radius: 0 8px 8px 0;
-            padding: 10px 12px;
-            font-size: 13px;
-            animation: slideIn 0.3s ease;
+            background: #0f172a; border-left: 3px solid #22c55e;
+            border-radius: 0 8px 8px 0; padding: 10px 12px; font-size: 13px;
+            cursor: pointer; transition: background 0.15s;
         }
-
-        .notif-item.depart {
-            border-left-color: #ef4444;
-        }
-
-        .notif-item .notif-time {
-            font-size: 11px;
-            color: #64748b;
-            margin-top: 4px;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
+        .notif-item:hover { background: #1a2540; }
+        .notif-item.depart { border-left-color: #ef4444; }
+        .notif-item .notif-time { font-size: 11px; color: #64748b; margin-top: 4px; }
 
         .notif-empty {
-            text-align: center;
-            color: #475569;
-            font-size: 13px;
-            padding: 20px;
+            text-align: center; color: #475569; font-size: 13px; padding: 20px;
         }
 
-        /* Geofence add form */
-        .add-geofence-section {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 14px;
-        }
 
-        .add-geofence-section input,
-        .add-geofence-section select {
-            width: 100%;
+        /* ---- Expanded Notification Bar (right of sidebar) ---- */
+        .notif-expand-bar {
+            position: fixed;
+            top: 60px;
+            left: 340px;
+            width: 340px;
+            bottom: 0;
             background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 6px;
-            padding: 8px 10px;
-            color: #e2e8f0;
-            font-size: 13px;
-            margin-top: 6px;
+            border-right: 1px solid #334155;
+            z-index: 900;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+        .notif-expand-bar.open {
+            opacity: 1;
+            visibility: visible;
         }
 
-        .add-geofence-section input:focus {
-            outline: none;
-            border-color: #f59e0b;
+        .notif-expand-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 16px 12px; border-bottom: 1px solid #334155;
+        }
+        .notif-expand-header .section-title { margin-bottom: 0; }
+        .notif-expand-close {
+            font-size: 16px; color: #64748b; background: none; border: 1px solid #334155;
+            border-radius: 6px; padding: 2px 8px; cursor: pointer; transition: all 0.2s; line-height: 1;
+        }
+        .notif-expand-close:hover { color: #f59e0b; border-color: #f59e0b; }
+
+        .notif-expand-list {
+            flex: 1; overflow-y: auto; padding: 12px 16px; display: flex;
+            flex-direction: column; gap: 6px;
         }
 
-        .add-geofence-section label {
-            font-size: 12px;
-            color: #94a3b8;
-            display: block;
-            margin-top: 8px;
-        }
+        /* Items in expanded bar use same style as sidebar */
+        .notif-expand-list .notif-item { cursor: default; }
+        .notif-expand-list .notif-item:hover { background: #0f172a; }
 
+        /* ---- Toast Popup (bottom right) ---- */
+        .toast-container {
+            position: fixed; bottom: 24px; right: 24px; z-index: 3000;
+            display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+        }
+        .toast {
+            background: #1e293b; border: 1px solid #334155; border-left: 4px solid #22c55e;
+            border-radius: 0 10px 10px 0; padding: 14px 20px; font-size: 14px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5); pointer-events: auto; cursor: pointer;
+            animation: toastIn 0.4s ease, toastOut 0.4s ease 4.6s forwards; max-width: 380px;
+        }
+        .toast.depart { border-left-color: #ef4444; }
+        .toast .toast-time { font-size: 11px; color: #64748b; margin-top: 4px; }
+        @keyframes toastIn { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
+        @keyframes toastOut { from{opacity:1} to{opacity:0;transform:translateY(10px)} }
+
+        /* ---- Geofence add form ---- */
+        .add-geofence-section {
+            background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 14px;
+        }
+        .add-geofence-section input, .add-geofence-section select {
+            width: 100%; background: #1e293b; border: 1px solid #334155; border-radius: 6px;
+            padding: 8px 10px; color: #e2e8f0; font-size: 13px; margin-top: 6px;
+        }
+        .add-geofence-section input:focus { outline: none; border-color: #f59e0b; }
+        .add-geofence-section label { font-size: 12px; color: #94a3b8; display: block; margin-top: 8px; }
         .add-geofence-btn {
-            width: 100%;
-            margin-top: 12px;
-            padding: 9px;
-            background: #f59e0b;
-            color: #0f172a;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
+            width: 100%; margin-top: 12px; padding: 9px; background: #f59e0b; color: #0f172a;
+            border: none; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer;
             transition: background 0.2s;
         }
-
-        .add-geofence-btn:hover {
-            background: #d97706;
-        }
-
-        .hint-text {
-            font-size: 11px;
-            color: #64748b;
-            margin-top: 6px;
-        }
+        .add-geofence-btn:hover { background: #d97706; }
+        .hint-text { font-size: 11px; color: #64748b; margin-top: 6px; }
 
         /* ---- Map ---- */
-        #map {
-            width: 100%;
-            height: 100%;
-        }
+        #map { width: 100%; height: 100%; }
 
-        /* Custom marker tooltip */
         .device-tooltip {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 10px 14px;
-            color: #e2e8f0;
-            font-size: 13px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            background: #1e293b; border: 1px solid #334155; border-radius: 8px;
+            padding: 10px 14px; color: #e2e8f0; font-size: 13px; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
+        .device-tooltip .tt-name { font-weight: 700; margin-bottom: 4px; }
+        .device-tooltip .tt-meta { font-size: 11px; color: #94a3b8; }
 
-        .device-tooltip .tt-name {
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .device-tooltip .tt-meta {
-            font-size: 11px;
-            color: #94a3b8;
-        }
-
-        /* Scrollbar styling */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
@@ -308,7 +217,7 @@
 <div class="app-container">
     <!-- Top Bar -->
     <div class="top-bar">
-        <h1>📡 Trojan Trio <span>Live Tracker</span></h1>
+        <h1>Trojan Trio <span>Live Tracker</span></h1>
         <div class="status-badge">
             <div class="status-dot"></div>
             <span id="poll-status">Connecting...</span>
@@ -325,13 +234,13 @@
             </div>
         </div>
 
-        <!-- Notifications -->
+        <!-- Notifications (original inline style) -->
         <div class="notif-panel">
             <div class="notif-header">
-                <div class="section-title">Notifications</div>
+                <div class="section-title" onclick="toggleExpandBar()">Notifications</div>
                 <button class="notif-clear-btn" onclick="clearNotifications()">Clear</button>
             </div>
-            <div class="notif-list" id="notif-list">
+            <div class="notif-preview-list" id="notif-preview" onclick="toggleExpandBar()">
                 <div class="notif-empty">No notifications yet</div>
             </div>
         </div>
@@ -345,7 +254,7 @@
             <label>Radius (meters)
                 <input type="number" id="gf-radius" value="200" min="50" max="5000">
             </label>
-            <div class="hint-text">💡 Click on the map to set location, then click Add.</div>
+            <div class="hint-text">Click on the map to set location, then click Add.</div>
             <button class="add-geofence-btn" onclick="addGeofence()">+ Add Geofence</button>
         </div>
     </div>
@@ -354,300 +263,23 @@
     <div id="map"></div>
 </div>
 
+<!-- Expanded Notification Bar (slides out right of sidebar) -->
+<div class="notif-expand-bar" id="notif-expand-bar">
+    <div class="notif-expand-header">
+        <div class="section-title">All Notifications</div>
+        <button class="notif-expand-close" onclick="toggleExpandBar()">x</button>
+    </div>
+    <div class="notif-expand-list" id="notif-expand-list">
+        <div class="notif-empty">No notifications yet</div>
+    </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script>
-    // =============================================
-    // CONFIG
-    // =============================================
-    let POSITION_UPDATE_INTERVAL = 5;  // Seconds
-    // =============================================
-    // MAP INITIALIZATION
-    // =============================================
-    const map = L.map('map', {
-        zoomControl: true,
-    }).setView([34.0224, -118.2851], 13);  // Centered on USC
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO',
-        maxZoom: 19,
-    }).addTo(map);
-
-    // =============================================
-    // STATE
-    // =============================================
-    const deviceMarkers = {};      // name -> L.marker
-    const deviceTrails = {};       // name -> L.polyline
-    const deviceTrailCoords = {};  // name -> [[lat, lon], ...]
-    const geofenceCircles = {};    // id -> L.circle
-    let clickedLatLng = null;      // For adding geofence by click
-    let lastNotifCount = 0;
-
-    // Device colors
-    const COLORS = ['#f59e0b', '#22c55e', '#3b82f6', '#ef4444', '#a855f7', '#ec4899'];
-
-    // =============================================
-    // MAP CLICK -> SET GEOFENCE LOCATION
-    // =============================================
-    let clickMarker = null;
-
-    map.on('click', function (e) {
-        clickedLatLng = e.latlng;
-        if (clickMarker) {
-            clickMarker.setLatLng(e.latlng);
-        } else {
-            clickMarker = L.circleMarker(e.latlng, {
-                radius: 8,
-                color: '#f59e0b',
-                fillColor: '#f59e0b',
-                fillOpacity: 0.6,
-            }).addTo(map);
-        }
-    });
-
-    // =============================================
-    // CREATE DEVICE MARKER (pulsing colored dot)
-    // =============================================
-    function createDeviceIcon(color) {
-        return L.divIcon({
-            className: '',
-            html: `
-                <div style="
-                    width: 18px; height: 18px;
-                    background: ${color};
-                    border: 3px solid white;
-                    border-radius: 50%;
-                    box-shadow: 0 0 10px ${color}88;
-                "></div>
-            `,
-            iconSize: [18, 18],
-            iconAnchor: [9, 9],
-        });
-    }
-
-    // =============================================
-    // DRAW GEOFENCES
-    // =============================================
-    function drawGeofences(geofences) {
-        geofences.forEach(gf => {
-            if (geofenceCircles[gf.id]) return;  // Already drawn
-
-            const circle = L.circle([gf.lat, gf.lon], {
-                radius: gf.radius,
-                color: '#f59e0b',
-                fillColor: '#f59e0b',
-                fillOpacity: 0.08,
-                weight: 1.5,
-                dashArray: '6 4',
-            }).addTo(map);
-
-            // Label
-            L.marker([gf.lat, gf.lon], {
-                icon: L.divIcon({
-                    className: '',
-                    html: `<div style="
-                        color: #f59e0b;
-                        font-size: 11px;
-                        font-weight: 600;
-                        white-space: nowrap;
-                        text-shadow: 0 0 4px #0f172a, 0 0 8px #0f172a;
-                    ">${gf.name}</div>`,
-                    iconAnchor: [-10, 10],
-                }),
-            }).addTo(map);
-
-            geofenceCircles[gf.id] = circle;
-        });
-    }
-
-    // =============================================
-    // UPDATE DEVICE POSITIONS
-    // =============================================
-    function updateDevices(devices) {
-        const listEl = document.getElementById('device-list');
-        let cardsHtml = '';
-
-        devices.forEach((dev, i) => {
-            const color = COLORS[i % COLORS.length];
-            const lat = dev.lat;
-            const lon = dev.lon;
-
-            // Update or create marker
-            if (deviceMarkers[dev.name]) {
-                deviceMarkers[dev.name].setLatLng([lat, lon]);
-            } else {
-                deviceMarkers[dev.name] = L.marker([lat, lon], {
-                    icon: createDeviceIcon(color),
-                }).addTo(map);
-            }
-
-            // Tooltip
-            deviceMarkers[dev.name].unbindTooltip();
-            deviceMarkers[dev.name].bindTooltip(`
-                <div class="device-tooltip">
-                    <div class="tt-name">${dev.name}</div>
-                    <div class="tt-meta">
-                        ${lat.toFixed(5)}, ${lon.toFixed(5)}<br>
-                        🔋 ${dev.batt}% &nbsp; ⏱ ${dev.last_update}
-                    </div>
-                </div>
-            `, { permanent: false, direction: 'top', offset: [0, -12], className: '' });
-
-            // Trail
-            if (!deviceTrailCoords[dev.name]) {
-                deviceTrailCoords[dev.name] = [];
-            }
-            const coords = deviceTrailCoords[dev.name];
-            const lastCoord = coords[coords.length - 1];
-            if (!lastCoord || lastCoord[0] !== lat || lastCoord[1] !== lon) {
-                coords.push([lat, lon]);
-                // Keep last 200 points
-                if (coords.length > 200) coords.shift();
-            }
-
-            if (deviceTrails[dev.name]) {
-                deviceTrails[dev.name].setLatLngs(coords);
-            } else {
-                deviceTrails[dev.name] = L.polyline(coords, {
-                    color: color,
-                    weight: 3,
-                    opacity: 0.6,
-                }).addTo(map);
-            }
-
-            // Sidebar card
-            cardsHtml += `
-                <div class="device-card" onclick="map.setView([${lat}, ${lon}], 16)" style="cursor:pointer; margin-top: 8px;">
-                    <div class="device-header">
-                        <div class="device-avatar" style="background: ${color}">${dev.name[0]}</div>
-                        <div class="device-name">${dev.name}</div>
-                    </div>
-                    <div class="device-meta">
-                        <span>📍 ${lat.toFixed(4)}, ${lon.toFixed(4)}</span>
-                        <span>🔋 ${dev.batt}%</span>
-                        <span>📶 ${dev.conn === 'w' ? 'WiFi' : dev.conn === 'm' ? 'Mobile' : dev.conn}</span>
-                        <span>⏱ ${dev.last_update ? dev.last_update.split(' ')[1] : '--'}</span>
-                    </div>
-                </div>
-            `;
-        });
-
-        if (cardsHtml) {
-            listEl.innerHTML = cardsHtml;
-        }
-    }
-
-    // =============================================
-    // UPDATE NOTIFICATIONS
-    // =============================================
-    function updateNotifications(notifs) {
-        const listEl = document.getElementById('notif-list');
-
-        if (!notifs || notifs.length === 0) {
-            listEl.innerHTML = '<div class="notif-empty">No notifications yet</div>';
-            return;
-        }
-
-        // Only re-render if count changed
-        if (notifs.length === lastNotifCount) return;
-        lastNotifCount = notifs.length;
-
-        // Show newest first
-        const reversed = [...notifs].reverse();
-        listEl.innerHTML = reversed.map(n => `
-            <div class="notif-item ${n.type}">
-                <div>${n.message}</div>
-                <div class="notif-time">${n.timestamp}</div>
-            </div>
-        `).join('');
-    }
-
-    // =============================================
-    // ADD GEOFENCE
-    // =============================================
-    async function addGeofence() {
-        const name = document.getElementById('gf-name').value.trim();
-        const radius = parseInt(document.getElementById('gf-radius').value);
-
-        if (!clickedLatLng) {
-            alert('Click on the map first to set the geofence location.');
-            return;
-        }
-        if (!name) {
-            alert('Please enter a name for the geofence.');
-            return;
-        }
-
-        try {
-            const resp = await fetch('/api/geofence', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: name,
-                    lat: clickedLatLng.lat,
-                    lon: clickedLatLng.lng,
-                    radius: radius,
-                }),
-            });
-            const data = await resp.json();
-            if (data.status === 'ok') {
-                drawGeofences([data.geofence]);
-                // Clear
-                document.getElementById('gf-name').value = '';
-                if (clickMarker) {
-                    map.removeLayer(clickMarker);
-                    clickMarker = null;
-                }
-                clickedLatLng = null;
-            }
-        } catch (e) {
-            console.error('Failed to add geofence:', e);
-        }
-    }
-
-    // =============================================
-    // CLEAR NOTIFICATIONS
-    // =============================================
-    async function clearNotifications() {
-        try {
-            await fetch('/api/notifications/clear', { method: 'POST' });
-            document.getElementById('notif-list').innerHTML =
-                '<div class="notif-empty">No notifications yet</div>';
-            lastNotifCount = 0;
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    // =============================================
-    // POLLING LOOP
-    // =============================================
-    let pollCount = 0;
-
-    async function poll() {
-        try {
-            const resp = await fetch('/api/locations');
-            const data = await resp.json();
-
-            updateDevices(data.devices || []);
-            updateNotifications(data.notifications || []);
-            drawGeofences(data.geofences || []);
-
-            pollCount++;
-            document.getElementById('poll-status').textContent =
-                `Live · ${data.devices.length} device(s) · updated ${new Date().toLocaleTimeString()}`;
-
-        } catch (e) {
-            document.getElementById('poll-status').textContent = 'Connection error';
-            console.error('Poll error:', e);
-        }
-    }
-
-    // Start polling
-    poll();
-    setInterval(poll, POSITION_UPDATE_INTERVAL * 1000);
-</script>
-
+<script src="static/scripts.js"></script>
 </body>
 </html>

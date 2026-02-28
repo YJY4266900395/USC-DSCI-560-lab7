@@ -36,9 +36,13 @@ Mode: HTTP
 - Example:http://3.151.116.127:8080/api/v1/hr9qlCMjAL2XeF8shwsV/telemetry
 
 - Step 2: Enable Location
+  
 Phone Settings:
+
 Allow location access: Always
+
 Enable precise location
+
 - Step 3: Enable Extended Data
 Preferences → Reporting
 Enable:Extended Data

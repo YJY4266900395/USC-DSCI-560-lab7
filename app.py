@@ -50,8 +50,8 @@ EMAIL_SENDER = "qianshupeng2025@gmail.com"       # Your Gmail address
 EMAIL_PASSWORD = "sehq saaa clul fgwl"       # Gmail App Password
 EMAIL_RECIPIENTS = [                         # Who receives notifications
     "qianshup@usc.edu",
-#     "teammate2@gmail.com",
-#     "teammate3@gmail.com",
+    "jinyaoya@usc.edu",
+    "senpang@usc.edu",
 ]
 
 # =============================================================================
